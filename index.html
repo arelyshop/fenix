@@ -86,7 +86,11 @@
             <div class="text-right">
                 <p id="header-asesora" class="font-semibold text-lg"></p>
             </div>
-             <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Cerrar Sesión</button>
+             <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-900 focus:ring-red-500" aria-label="Cerrar Sesión">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+            </button>
         </header>
 
         <!-- Contenido Principal (Formulario de Ventas) -->
@@ -104,10 +108,6 @@
                         <div class="md:col-span-2">
                             <label for="saleDate" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Venta</label>
                             <input type="date" id="saleDate" name="saleDate" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="clientName" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Cliente</label>
-                            <input type="text" id="clientName" name="clientName" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" placeholder="Nombre completo del cliente">
                         </div>
                         <div class="md:col-span-2">
                             <label for="productName" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Producto</label>
@@ -259,7 +259,16 @@
 
         function handleSaleSubmit(e) {
             e.preventDefault();
-            if (!salesForm.checkValidity()) {
+            // Validar campos requeridos
+            const requiredFields = Array.from(salesForm.querySelectorAll('[required]'));
+            let allValid = true;
+            requiredFields.forEach(field => {
+                if (!field.value) {
+                    allValid = false;
+                }
+            });
+
+            if (!allValid) {
                 showSalesMessage('Por favor, completa todos los campos requeridos.', 'error');
                 return;
             }
@@ -267,8 +276,8 @@
             setLoading(true, 'sales');
             showSalesMessage('', 'success');
 
-            // Poblar campo oculto de la asesora
-            document.getElementById('salesPerson').value = loggedInUser.fullName;
+            // Poblar campo oculto con el USUARIO de la asesora para el registro
+            document.getElementById('salesPerson').value = loggedInUser.user;
 
             const formData = new FormData(salesForm);
             const saleData = Object.fromEntries(formData.entries());
@@ -283,8 +292,7 @@
             .then(data => {
                 if (data.status === 'success') {
                     showSalesMessage('¡Venta registrada con éxito!', 'success');
-                    // Limpiar solo los campos que el usuario llena
-                    document.getElementById('clientName').value = '';
+                    // Limpiar los campos del formulario
                     document.getElementById('productName').value = '';
                     document.getElementById('quantity').value = '';
                     document.getElementById('amount').value = '';
