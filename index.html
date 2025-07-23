@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Registro de Ventas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Simple spinner for loading states */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border-left-color: #09f;
+            animation: spin 1s ease infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <!-- Login Section -->
+    <div id="login-section" class="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg">
+        <h2 class="text-3xl font-bold text-center text-gray-800">Iniciar Sesión</h2>
+        <form id="login-form" class="space-y-6">
+            <div>
+                <label for="username" class="text-sm font-medium text-gray-700">Usuario</label>
+                <input type="text" id="username" name="username" required
+                       class="w-full px-4 py-2 mt-2 text-base text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label for="password" class="text-sm font-medium text-gray-700">Contraseña</label>
+                <input type="password" id="password" name="password" required
+                       class="w-full px-4 py-2 mt-2 text-base text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 text-lg font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300">
+                    Ingresar
+                </button>
+            </div>
+            <p id="login-error" class="text-sm text-center text-red-500"></p>
+        </form>
+    </div>
+
+    <!-- POS Section (hidden by default) -->
+    <div id="pos-section" class="hidden w-full max-w-2xl p-8 space-y-6 bg-white rounded-xl shadow-lg">
+        <div class="flex justify-between items-center">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-800">Registrar Venta</h2>
+                <p class="text-gray-600">Asesora: <span id="sales-person-name" class="font-semibold"></span></p>
+            </div>
+            <button id="logout-button" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none">
+                Salir
+            </button>
+        </div>
+
+        <form id="sales-form" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label for="quantity" class="text-sm font-medium text-gray-700">Cantidad</label>
+                    <input type="number" id="quantity" name="quantity" required
+                           class="w-full px-4 py-2 mt-1 text-base text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                 <div>
+                    <label for="sale-type" class="text-sm font-medium text-gray-700">Tipo de Venta</label>
+                    <select id="sale-type" name="sale-type" required
+                            class="w-full px-4 py-2 mt-1 text-base text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="Producto Solo">Producto Solo</option>
+                        <option value="Combo">Combo</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="sale-modality" class="text-sm font-medium text-gray-700">Modalidad de Venta</label>
+                    <select id="sale-modality" name="sale-modality" required
+                            class="w-full px-4 py-2 mt-1 text-base text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="Unidad">Unidad</option>
+                        <option value="Mayoreo">Mayoreo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label for="product-name" class="text-sm font-medium text-gray-700">Nombre del Producto</label>
+                <input type="text" id="product-name" name="product-name" required
+                       class="w-full px-4 py-2 mt-1 text-base text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label for="payment-method" class="text-sm font-medium text-gray-700">Método de Pago</label>
+                    <select id="payment-method" name="payment-method" required
+                            class="w-full px-4 py-2 mt-1 text-base text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="QR">QR</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="amount" class="text-sm font-medium text-gray-700">Monto Vendido (Bs.)</label>
+                    <input type="number" step="0.01" id="amount" name="amount" required
+                           class="w-full px-4 py-2 mt-1 text-base text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label for="sale-date" class="text-sm font-medium text-gray-700">Fecha de la Venta</label>
+                    <input type="date" id="sale-date" name="sale-date" required
+                           class="w-full px-4 py-2 mt-1 text-base text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" id="submit-sale-button"
+                        class="w-full flex items-center justify-center py-3 px-4 text-lg font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300">
+                    <span id="submit-text">Registrar Venta</span>
+                    <div id="submit-spinner" class="hidden spinner"></div>
+                </button>
+            </div>
+            <p id="form-message" class="text-sm text-center"></p>
+        </form>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const USERS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQbzWpIQ5AcI4sLGUIxGQoSyjfJIjKfwvgn9vSfbr_c7SYeYur2iC7CGNJ-oRkVDogL6dU6hyJsue12/pub?output=csv';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzROYgyZMBQkg4rcjEUuOHLIx-mkmkZX62Q-QD4i4O3HUpAqu2D9QJfvHps-zwR6aMT/exec';
+
+        // --- DOM ELEMENTS ---
+        const loginSection = document.getElementById('login-section');
+        const posSection = document.getElementById('pos-section');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const salesForm = document.getElementById('sales-form');
+        const salesPersonNameEl = document.getElementById('sales-person-name');
+        const logoutButton = document.getElementById('logout-button');
+        const formMessage = document.getElementById('form-message');
+        const submitSaleButton = document.getElementById('submit-sale-button');
+        const submitText = document.getElementById('submit-text');
+        const submitSpinner = document.getElementById('submit-spinner');
+
+        let loggedInUser = null;
+
+        // --- LOGIN LOGIC ---
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            loginError.textContent = '';
+            const username = loginForm.username.value.trim();
+            const password = loginForm.password.value;
+
+            try {
+                const response = await fetch(USERS_SHEET_URL);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const csvText = await response.text();
+                const users = parseCSV(csvText);
+
+                const user = users.slice(1).find(
+                    row => row[0] === username && row[1] === password
+                );
+
+                if (user) {
+                    loggedInUser = user[2];
+                    salesPersonNameEl.textContent = loggedInUser;
+                    loginSection.classList.add('hidden');
+                    posSection.classList.remove('hidden');
+                    sessionStorage.setItem('loggedInUser', loggedInUser);
+                } else {
+                    loginError.textContent = 'Usuario o contraseña incorrectos.';
+                }
+            } catch (error) {
+                console.error('Login Error:', error);
+                loginError.textContent = 'No se pudo verificar. Revisa tu conexión.';
+            }
+        });
+
+        // --- SALES FORM LOGIC (FINAL VERSION USING XMLHttpRequest) ---
+        salesForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            setLoading(true);
+            formMessage.textContent = '';
+            formMessage.classList.remove('text-green-600', 'text-red-600');
+
+            const saleData = {
+                salesPerson: loggedInUser,
+                quantity: document.getElementById('quantity').value,
+                productName: document.getElementById('product-name').value,
+                paymentMethod: document.getElementById('payment-method').value,
+                amount: document.getElementById('amount').value,
+                saleType: document.getElementById('sale-type').value,
+                saleModality: document.getElementById('sale-modality').value,
+                saleDate: document.getElementById('sale-date').value
+            };
+
+            // Using XMLHttpRequest as a more robust alternative to fetch() for Google Apps Script
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', SCRIPT_URL, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const result = JSON.parse(xhr.responseText);
+                        if (result.status === 'success') {
+                            formMessage.textContent = result.message;
+                            formMessage.classList.add('text-green-600');
+                            salesForm.reset();
+                            document.getElementById('sale-date').valueAsDate = new Date();
+                        } else {
+                            throw new Error(result.message || 'Error en la respuesta del script.');
+                        }
+                    } catch (parseError) {
+                        console.error('Error parsing response:', parseError, 'Response:', xhr.responseText);
+                        formMessage.textContent = 'Error: Respuesta inesperada del servidor.';
+                        formMessage.classList.add('text-red-600');
+                    }
+                } else {
+                    formMessage.textContent = `Error del servidor: ${xhr.status} ${xhr.statusText}`;
+                    formMessage.classList.add('text-red-600');
+                }
+                setLoading(false);
+                setTimeout(() => { formMessage.textContent = ''; }, 5000);
+            };
+
+            xhr.onerror = function() {
+                setLoading(false);
+                formMessage.textContent = 'Error de red. Verifique su conexión e intente de nuevo.';
+                formMessage.classList.add('text-red-600');
+                setTimeout(() => { formMessage.textContent = ''; }, 5000);
+            };
+
+            xhr.send(JSON.stringify(saleData));
+        });
+        
+        // --- LOGOUT LOGIC ---
+        logoutButton.addEventListener('click', () => {
+            sessionStorage.removeItem('loggedInUser');
+            loggedInUser = null;
+            location.reload();
+        });
+
+        // --- HELPER FUNCTIONS ---
+        function parseCSV(text) {
+            const rows = text.split(/\r?\n/).map(row => row.split(',').map(cell => cell.trim()));
+            return rows;
+        }
+        
+        function setLoading(isLoading) {
+            if (isLoading) {
+                submitText.classList.add('hidden');
+                submitSpinner.classList.remove('hidden');
+                submitSaleButton.disabled = true;
+                submitSaleButton.classList.add('opacity-70', 'cursor-not-allowed');
+            } else {
+                submitText.classList.remove('hidden');
+                submitSpinner.classList.add('hidden');
+                submitSaleButton.disabled = false;
+                submitSaleButton.classList.remove('opacity-70', 'cursor-not-allowed');
+            }
+        }
+        
+        // --- ON PAGE LOAD ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedUser = sessionStorage.getItem('loggedInUser');
+            if (savedUser) {
+                loggedInUser = savedUser;
+                salesPersonNameEl.textContent = loggedInUser;
+                loginSection.classList.add('hidden');
+                posSection.classList.remove('hidden');
+            }
+            // Set default date to today
+            document.getElementById('sale-date').valueAsDate = new Date();
+        });
+
+    </script>
+</body>
+</html>
