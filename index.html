@@ -189,6 +189,7 @@
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo por Unidad</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto Total</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo Venta</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comisión</th>
@@ -280,10 +281,10 @@
                     registrationDate: v[0], // Columna A
                     saleDate: v[1],         // Columna B
                     user: v[2],
-                    quantity: parseInt(v[3], 10),
+                    quantity: parseInt(v[3], 10) || 0,    // Columna D
                     productName: v[4],
                     paymentMethod: v[5],
-                    totalAmount: parseFloat(v[6]), // Esta es la columna G, Monto Total
+                    unitPrice: parseFloat(v[6]) || 0,   // Columna G (Precio por unidad)
                     saleType: v[7]
                 }));
             } catch (error) {
@@ -436,8 +437,8 @@
             let mayoristaCommission = 0;
 
             sales.forEach(sale => {
-                // La columna G es el Monto Total, no el precio unitario.
-                const totalAmount = sale.totalAmount; 
+                // Calcular el monto total: Cantidad (Col D) * Precio Unitario (Col G)
+                const totalAmount = sale.quantity * sale.unitPrice;
                 let commission = 0;
                 
                 if (sale.saleType.toLowerCase() === 'minorista') {
@@ -453,6 +454,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${sale.saleDate}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${sale.productName}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${sale.quantity}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Bs. ${sale.unitPrice.toFixed(2)}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Bs. ${totalAmount.toFixed(2)}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${sale.saleType}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">Bs. ${commission.toFixed(2)}</td>
