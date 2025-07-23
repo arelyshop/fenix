@@ -14,32 +14,27 @@
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6; /* bg-gray-100 */
         }
-        /* Estilos para campos numéricos */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
-        input[type="number"] {
-            -moz-appearance: textfield; /* Para Firefox */
-        }
-        /* Ocultar elementos por defecto */
-        .hidden {
-            display: none;
+        input[type="number"] { -moz-appearance: textfield; }
+        .hidden { display: none; }
+        .nav-active {
+            border-bottom: 2px solid #3b82f6; /* blue-500 */
+            color: #3b82f6;
         }
     </style>
 </head>
 <body>
 
-    <!-- Contenedor del Login (Visible por defecto) -->
+    <!-- Contenedor del Login -->
     <div id="login-wrapper" class="flex flex-col items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
         <div id="login-container" class="w-full max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
-            <!-- Encabezado del Login con Logo -->
             <div class="bg-blue-900 p-6">
                 <img src="https://dcdn-us.mitiendanube.com/stores/004/546/736/themes/common/logo-660776128-1736645739-9bb5db1715d3b799cdf782b0f0815d541736645739-480-0.webp" alt="Logo Arelyshop Bolivia" class="mx-auto h-16 w-auto">
             </div>
-
-            <!-- Cuerpo del Formulario -->
             <div class="p-8 space-y-6">
                 <div class="text-center">
                     <h1 class="text-3xl font-bold text-gray-800">Iniciar Sesión</h1>
@@ -49,27 +44,17 @@
                     <div class="space-y-5">
                         <div>
                             <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
-                            <input type="text" id="username" name="username" required
-                                   class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                   placeholder="Tu usuario">
+                            <input type="text" id="username" name="username" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Tu usuario">
                         </div>
                         <div>
                             <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-                            <input type="password" id="password" name="password" required
-                                   class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                   placeholder="Tu contraseña">
+                            <input type="password" id="password" name="password" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Tu contraseña">
                         </div>
                     </div>
                     <div class="mt-8">
-                        <button type="submit" id="login-button"
-                                class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button type="submit" id="login-button" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:-translate-y-1 disabled:opacity-50">
                             <span id="login-button-text">Ingresar</span>
-                            <span id="login-button-spinner" class="hidden">
-                                <svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                            </span>
+                            <span id="login-button-spinner" class="hidden"><svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></span>
                         </button>
                     </div>
                 </form>
@@ -78,91 +63,147 @@
         </div>
     </div>
 
-    <!-- Contenedor de la Aplicación Principal (Oculto por defecto) -->
+    <!-- Contenedor de la Aplicación Principal -->
     <div id="app-container" class="flex flex-col min-h-screen bg-gray-100 hidden">
-        <!-- Header -->
         <header class="bg-blue-900 text-white p-4 shadow-lg flex justify-between items-center sticky top-0 z-10">
             <img src="https://dcdn-us.mitiendanube.com/stores/004/546/736/themes/common/logo-660776128-1736645739-9bb5db1715d3b799cdf782b0f0815d541736645739-480-0.webp" alt="Logo Arelyshop Bolivia" class="h-12 w-auto">
-            <div class="text-right">
+            <div class="flex items-center space-x-4">
                 <p id="header-asesora" class="font-semibold text-lg"></p>
+                <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-900 focus:ring-red-500" aria-label="Cerrar Sesión">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                </button>
             </div>
-             <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-900 focus:ring-red-500" aria-label="Cerrar Sesión">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-            </button>
         </header>
 
-        <!-- Contenido Principal (Formulario de Ventas) -->
-        <main class="flex-grow container mx-auto px-4 py-8">
-            <div id="sales-container" class="w-full max-w-3xl mx-auto">
-                 <div class="text-center mb-8">
-                    <h1 class="text-3xl font-bold text-gray-800">Registrar Nueva Venta</h1>
-                    <p class="text-gray-500 mt-2">Completa los detalles para registrar una nueva venta.</p>
-                </div>
+        <nav class="bg-white shadow-md">
+            <div class="container mx-auto flex">
+                <button id="nav-register" class="py-4 px-6 text-gray-600 hover:text-blue-500 focus:outline-none">Registrar Venta</button>
+                <button id="nav-reports" class="py-4 px-6 text-gray-600 hover:text-blue-500 focus:outline-none">Mis Reportes</button>
+            </div>
+        </nav>
 
-                <form id="sales-form" novalidate class="bg-white p-8 rounded-xl shadow-lg">
-                    <input type="hidden" id="salesPerson" name="salesPerson">
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                        <div class="md:col-span-2">
-                            <label for="saleDate" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Venta</label>
-                            <input type="date" id="saleDate" name="saleDate" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+        <main class="flex-grow container mx-auto px-4 py-8">
+            <!-- Vista de Registrar Venta -->
+            <div id="register-view">
+                <div class="w-full max-w-3xl mx-auto">
+                    <div class="text-center mb-8">
+                        <h1 class="text-3xl font-bold text-gray-800">Registrar Nueva Venta</h1>
+                        <p class="text-gray-500 mt-2">Completa los detalles para registrar una nueva venta.</p>
+                    </div>
+                    <form id="sales-form" novalidate class="bg-white p-8 rounded-xl shadow-lg">
+                        <input type="hidden" id="salesPerson" name="salesPerson">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                            <div class="md:col-span-2">
+                                <label for="saleDate" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Venta</label>
+                                <input type="date" id="saleDate" name="saleDate" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="productName" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Producto</label>
+                                <input type="text" id="productName" name="productName" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Ej: Cartera de Cuero">
+                            </div>
+                            <div>
+                                <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">Cantidad</label>
+                                <input type="number" id="quantity" name="quantity" required min="1" class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Ej: 1">
+                            </div>
+                            <div>
+                                <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Monto Total (Bs.)</label>
+                                <input type="number" id="amount" name="amount" step="0.01" required min="0" class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Ej: 350.50">
+                            </div>
+                            <div>
+                                <label for="paymentMethod" class="block text-sm font-medium text-gray-700 mb-1">Método de Pago</label>
+                                <select id="paymentMethod" name="paymentMethod" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Seleccione uno...</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Tarjeta de Crédito/Débito">Tarjeta de Crédito/Débito</option>
+                                    <option value="Transferencia Bancaria">Transferencia Bancaria</option>
+                                    <option value="QR">QR</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="saleType" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Venta</label>
+                                <select id="saleType" name="saleType" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Seleccione uno...</option>
+                                    <option value="Minorista">Minorista</option>
+                                    <option value="Mayorista">Mayorista</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="saleModality" class="block text-sm font-medium text-gray-700 mb-1">Modalidad</label>
+                                 <select id="saleModality" name="saleModality" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Seleccione uno...</option>
+                                    <option value="Tienda Física">Tienda Física</option>
+                                    <option value="En Línea">En Línea</option>
+                                    <option value="Delivery">Delivery</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="md:col-span-2">
-                            <label for="productName" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Producto</label>
-                            <input type="text" id="productName" name="productName" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" placeholder="Ej: Cartera de Cuero, Zapatos Casuales">
+                        <div class="mt-8">
+                            <button type="submit" id="submit-button" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:-translate-y-1 disabled:opacity-50">
+                                <span id="button-text">Registrar Venta</span>
+                                <span id="button-spinner" class="hidden"><svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></span>
+                            </button>
+                        </div>
+                         <div id="message" class="mt-6 text-center text-sm font-medium" aria-live="polite"></div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Vista de Reportes -->
+            <div id="reports-view" class="hidden">
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Reporte de Ventas y Comisiones</h2>
+                    <!-- Filtros -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 p-4 border rounded-lg bg-gray-50">
+                        <div>
+                            <label for="startDate" class="block text-sm font-medium text-gray-700">Fecha de Inicio</label>
+                            <input type="date" id="startDate" name="startDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         </div>
                         <div>
-                            <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">Cantidad</label>
-                            <input type="number" id="quantity" name="quantity" required min="1" class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" placeholder="Ej: 1">
+                            <label for="endDate" class="block text-sm font-medium text-gray-700">Fecha de Fin</label>
+                            <input type="date" id="endDate" name="endDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         </div>
-                        <div>
-                            <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Monto Total ($)</label>
-                            <input type="number" id="amount" name="amount" step="0.01" required min="0" class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" placeholder="Ej: 350.50">
-                        </div>
-                        <div>
-                            <label for="paymentMethod" class="block text-sm font-medium text-gray-700 mb-1">Método de Pago</label>
-                            <select id="paymentMethod" name="paymentMethod" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                                <option value="">Seleccione uno...</option>
-                                <option value="Efectivo">Efectivo</option>
-                                <option value="Tarjeta de Crédito/Débito">Tarjeta de Crédito/Débito</option>
-                                <option value="Transferencia Bancaria">Transferencia Bancaria</option>
-                                <option value="QR">QR</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="saleType" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Venta</label>
-                            <select id="saleType" name="saleType" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                                <option value="">Seleccione uno...</option>
-                                <option value="Minorista">Minorista</option>
-                                <option value="Mayorista">Mayorista</option>
-                            </select>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="saleModality" class="block text-sm font-medium text-gray-700 mb-1">Modalidad</label>
-                             <select id="saleModality" name="saleModality" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                                <option value="">Seleccione uno...</option>
-                                <option value="Tienda Física">Tienda Física</option>
-                                <option value="En Línea">En Línea</option>
-                                <option value="Delivery">Delivery</option>
-                            </select>
+                        <div class="flex items-end">
+                            <button id="generate-report-btn" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Generar Reporte</button>
                         </div>
                     </div>
-                    <div class="mt-8">
-                        <button type="submit" id="submit-button" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed">
-                            <span id="button-text">Registrar Venta</span>
-                            <span id="button-spinner" class="hidden">
-                                <svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                            </span>
-                        </button>
+                    <!-- Resumen de Comisiones -->
+                    <div id="commission-summary" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 text-center">
+                        <div class="bg-green-100 p-4 rounded-lg">
+                            <p class="text-sm font-medium text-green-800">Comisión Minorista (5%)</p>
+                            <p id="minorista-commission" class="text-2xl font-bold text-green-900">Bs. 0.00</p>
+                        </div>
+                        <div class="bg-blue-100 p-4 rounded-lg">
+                            <p class="text-sm font-medium text-blue-800">Comisión Mayorista (1%)</p>
+                            <p id="mayorista-commission" class="text-2xl font-bold text-blue-900">Bs. 0.00</p>
+                        </div>
+                        <div class="bg-purple-100 p-4 rounded-lg">
+                            <p class="text-sm font-medium text-purple-800">Comisión Total</p>
+                            <p id="total-commission" class="text-2xl font-bold text-purple-900">Bs. 0.00</p>
+                        </div>
                     </div>
-                     <div id="message" class="mt-6 text-center text-sm font-medium" aria-live="polite"></div>
-                </form>
+                    <!-- Tabla de Historial de Ventas -->
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto Total</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo Venta</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comisión</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sales-history-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Filas se insertarán aquí -->
+                            </tbody>
+                        </table>
+                         <p id="no-sales-message" class="text-center text-gray-500 py-8 hidden">No hay ventas para mostrar en el período seleccionado.</p>
+                    </div>
+                </div>
             </div>
         </main>
 
-        <!-- Footer -->
         <footer class="bg-gray-800 text-white text-center p-4 mt-auto">
             <p>&copy; <span id="footer-year"></span> Arelyshop Bolivia. Todos los derechos reservados.</p>
         </footer>
@@ -170,7 +211,8 @@
 
     <script>
         // --- URLs ---
-        const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQbzWpIQ5AcI4sLGUIxGQoSyjfJIjKfwvgn9vSfbr_c7SYeYur2iC7CGNJ-oRkVDogL6dU6hyJsue12/pub?output=csv";
+        const USERS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQbzWpIQ5AcI4sLGUIxGQoSyjfJIjKfwvgn9vSfbr_c7SYeYur2iC7CGNJ-oRkVDogL6dU6hyJsue12/pub?output=csv";
+        const SALES_DATA_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRRV9f07ulN2N2fbQbfDcdzIChZ67qmTDewYG_NSJB2XQV3roKv1nQijiJazp2uAIJFKafVTje4vmf/pub?output=csv";
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzROYgyZMBQkg4rcjEUuOHLIx-mkmkZX62Q-QD4i4O3HUpAqu2D9QJfvHps-zwR6aMT/exec";
 
         // --- Elementos del DOM ---
@@ -181,38 +223,72 @@
         const loginMessage = document.getElementById('login-message');
         const salesMessage = document.getElementById('message');
         const logoutButton = document.getElementById('logout-button');
+        const navRegister = document.getElementById('nav-register');
+        const navReports = document.getElementById('nav-reports');
+        const registerView = document.getElementById('register-view');
+        const reportsView = document.getElementById('reports-view');
+        const generateReportBtn = document.getElementById('generate-report-btn');
         
         let users = [];
+        let salesHistory = [];
         let loggedInUser = null;
 
-        // --- Funciones de Login y Logout ---
-        
-        function parseCSV(csvText) {
-            const lines = csvText.trim().split('\n');
-            const userList = [];
-            // Empezamos en 1 para saltar la cabecera
-            for (let i = 1; i < lines.length; i++) {
-                const values = lines[i].split(',');
-                if (values.length >= 3) {
-                    userList.push({
-                        user: values[0].trim(),
-                        password: values[1].trim(),
-                        fullName: values[2].trim().replace(/"/g, '') // Limpiar comillas
-                    });
-                }
+        // --- Funciones de Navegación y Vistas ---
+        function showView(viewId) {
+            registerView.classList.add('hidden');
+            reportsView.classList.add('hidden');
+            navRegister.classList.remove('nav-active');
+            navReports.classList.remove('nav-active');
+
+            if (viewId === 'register') {
+                registerView.classList.remove('hidden');
+                navRegister.classList.add('nav-active');
+            } else if (viewId === 'reports') {
+                reportsView.classList.remove('hidden');
+                navReports.classList.add('nav-active');
+                generateReport(); // Generar reporte inicial al cambiar de vista
             }
-            return userList;
+        }
+
+        // --- Funciones de Login y Logout ---
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n').slice(1); // Omitir cabecera
+            return lines.map(line => {
+                const values = line.split(',');
+                return values.map(v => v.trim().replace(/"/g, ''));
+            });
         }
 
         async function fetchUsers() {
             try {
-                const response = await fetch(GOOGLE_SHEET_URL);
+                const response = await fetch(USERS_URL);
                 if (!response.ok) throw new Error('No se pudo cargar la lista de usuarios.');
                 const csvText = await response.text();
-                users = parseCSV(csvText);
+                users = parseCSV(csvText).map(v => ({ user: v[0], password: v[1], fullName: v[2] }));
             } catch (error) {
                 console.error("Error al cargar usuarios:", error);
                 showLoginMessage("Error crítico: No se pudo conectar con la base de datos de usuarios.", 'error');
+            }
+        }
+        
+        async function fetchSales() {
+            try {
+                const response = await fetch(SALES_DATA_URL);
+                if (!response.ok) throw new Error('No se pudo cargar el historial de ventas.');
+                const csvText = await response.text();
+                salesHistory = parseCSV(csvText).map(v => ({
+                    registrationDate: v[0], // Columna A
+                    saleDate: v[1],         // Columna B
+                    user: v[2],
+                    quantity: parseInt(v[3], 10),
+                    productName: v[4],
+                    paymentMethod: v[5],
+                    totalAmount: parseFloat(v[6]), // Esta es la columna G, Monto Total
+                    saleType: v[7]
+                }));
+            } catch (error) {
+                console.error("Error al cargar ventas:", error);
+                // Opcional: mostrar un mensaje en la UI de reportes
             }
         }
 
@@ -225,11 +301,14 @@
             if (foundUser) {
                 loggedInUser = foundUser;
                 showLoginMessage('¡Inicio de sesión exitoso!', 'success');
-                setTimeout(() => {
-                    loginWrapper.classList.add('hidden');
-                    appContainer.classList.remove('hidden');
-                    updateHeader();
-                }, 1000);
+                Promise.all([fetchSales()]).then(() => {
+                     setTimeout(() => {
+                        loginWrapper.classList.add('hidden');
+                        appContainer.classList.remove('hidden');
+                        updateHeader();
+                        showView('register');
+                    }, 1000);
+                });
             } else {
                 showLoginMessage('Usuario o contraseña incorrectos.', 'error');
             }
@@ -237,10 +316,11 @@
         
         function handleLogout() {
             loggedInUser = null;
+            salesHistory = [];
             appContainer.classList.add('hidden');
             loginWrapper.classList.remove('hidden');
             loginForm.reset();
-            showLoginMessage('', 'success'); // Limpiar mensaje
+            showLoginMessage('', 'success');
         }
 
         function updateHeader() {
@@ -256,27 +336,16 @@
         }
 
         // --- Funciones del Formulario de Ventas ---
-
         function handleSaleSubmit(e) {
             e.preventDefault();
-            // Validar campos requeridos
             const requiredFields = Array.from(salesForm.querySelectorAll('[required]'));
-            let allValid = true;
-            requiredFields.forEach(field => {
-                if (!field.value) {
-                    allValid = false;
-                }
-            });
-
-            if (!allValid) {
+            if (requiredFields.some(field => !field.value)) {
                 showSalesMessage('Por favor, completa todos los campos requeridos.', 'error');
                 return;
             }
 
             setLoading(true, 'sales');
             showSalesMessage('', 'success');
-
-            // Poblar campo oculto con el USUARIO de la asesora para el registro
             document.getElementById('salesPerson').value = loggedInUser.user;
 
             const formData = new FormData(salesForm);
@@ -292,22 +361,16 @@
             .then(data => {
                 if (data.status === 'success') {
                     showSalesMessage('¡Venta registrada con éxito!', 'success');
-                    // Limpiar los campos del formulario
-                    document.getElementById('productName').value = '';
-                    document.getElementById('quantity').value = '';
-                    document.getElementById('amount').value = '';
-                    document.getElementById('paymentMethod').value = '';
-                    document.getElementById('saleType').value = '';
-                    document.getElementById('saleModality').value = '';
-                    document.getElementById('saleDate').valueAsDate = new Date(); // Restablece la fecha a hoy
+                    salesForm.reset();
+                    document.getElementById('saleDate').valueAsDate = new Date();
+                    fetchSales(); // Actualizar historial de ventas
                 } else {
                     throw new Error(data.message || 'El script devolvió un error.');
                 }
             })
             .catch(error => {
                 console.error('Error en el envío:', error);
-                const userFriendlyMessage = error instanceof TypeError ? "Error de red. Verifica tu conexión." : "Error al registrar la venta.";
-                showSalesMessage(userFriendlyMessage, 'error');
+                showSalesMessage("Error al registrar la venta.", 'error');
             })
             .finally(() => setLoading(false, 'sales'));
         }
@@ -325,23 +388,98 @@
             const spinner = formType === 'login' ? document.getElementById('login-button-spinner') : document.getElementById('button-spinner');
 
             button.disabled = isLoading;
-            if (isLoading) {
-                text.classList.add('hidden');
-                spinner.classList.remove('hidden');
+            text.classList.toggle('hidden', isLoading);
+            spinner.classList.toggle('hidden', !isLoading);
+        }
+        
+        // --- Funciones de Reportes ---
+        function generateReport() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            const filteredSales = salesHistory.filter(sale => {
+                const isUser = sale.user === loggedInUser.user;
+                if (!isUser) return false;
+                
+                // Usamos la columna B (saleDate) para el filtro
+                const parts = sale.saleDate.split('/');
+                const saleDateObj = new Date(parts[2], parts[1] - 1, parts[0]);
+
+                const start = startDate ? new Date(startDate) : null;
+                const end = endDate ? new Date(endDate) : null;
+
+                if(start) start.setHours(0,0,0,0);
+                
+                if (start && saleDateObj < start) return false;
+                if (end) {
+                    end.setHours(23, 59, 59, 999); // Incluir todo el día de fin
+                    if (saleDateObj > end) return false;
+                }
+                return true;
+            });
+
+            renderReportData(filteredSales);
+        }
+
+        function renderReportData(sales) {
+            const tbody = document.getElementById('sales-history-body');
+            const noSalesMessage = document.getElementById('no-sales-message');
+            tbody.innerHTML = '';
+            
+            if (sales.length === 0) {
+                noSalesMessage.classList.remove('hidden');
             } else {
-                text.classList.remove('hidden');
-                spinner.classList.add('hidden');
+                noSalesMessage.classList.add('hidden');
             }
+
+            let minoristaCommission = 0;
+            let mayoristaCommission = 0;
+
+            sales.forEach(sale => {
+                // La columna G es el Monto Total, no el precio unitario.
+                const totalAmount = sale.totalAmount; 
+                let commission = 0;
+                
+                if (sale.saleType.toLowerCase() === 'minorista') {
+                    commission = totalAmount * 0.05;
+                    minoristaCommission += commission;
+                } else if (sale.saleType.toLowerCase() === 'mayorista') {
+                    commission = totalAmount * 0.01;
+                    mayoristaCommission += commission;
+                }
+
+                const row = `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${sale.saleDate}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${sale.productName}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${sale.quantity}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Bs. ${totalAmount.toFixed(2)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${sale.saleType}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">Bs. ${commission.toFixed(2)}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+
+            document.getElementById('minorista-commission').textContent = `Bs. ${minoristaCommission.toFixed(2)}`;
+            document.getElementById('mayorista-commission').textContent = `Bs. ${mayoristaCommission.toFixed(2)}`;
+            document.getElementById('total-commission').textContent = `Bs. ${(minoristaCommission + mayoristaCommission).toFixed(2)}`;
         }
 
         // --- Inicialización ---
         document.addEventListener('DOMContentLoaded', () => {
             fetchUsers();
             loginForm.addEventListener('submit', handleLogin);
-            salesForm.addEventListener('submit', handleSaleSubmit);
             logoutButton.addEventListener('click', handleLogout);
+            navRegister.addEventListener('click', () => showView('register'));
+            navReports.addEventListener('click', () => showView('reports'));
+            generateReportBtn.addEventListener('click', generateReport);
+
             document.getElementById('footer-year').textContent = new Date().getFullYear();
-            document.getElementById('saleDate').valueAsDate = new Date(); // Establece la fecha de hoy por defecto
+            document.getElementById('saleDate').valueAsDate = new Date();
+            document.getElementById('endDate').valueAsDate = new Date();
+            const firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+            document.getElementById('startDate').valueAsDate = firstDayOfMonth;
         });
     </script>
 </body>
