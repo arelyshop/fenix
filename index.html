@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Ventas - Arelyshop Bolivia</title>
+    <!-- Usamos Tailwind CSS para un diseño moderno y responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* bg-gray-100 */
+        }
+        /* Estilos para campos numéricos */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield; /* Para Firefox */
+        }
+        /* Ocultar elementos por defecto */
+        .hidden {
+            display: none;
+        }
+        /* Estilos para las pestañas de navegación */
+        .tab-button {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .tab-button.active {
+            background-color: #3b82f6; /* bg-blue-500 */
+            color: white;
+            border-bottom-color: transparent;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Contenedor del Login (Visible por defecto) -->
+    <div id="login-wrapper" class="flex flex-col items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+        <div id="login-container" class="w-full max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+            <!-- Encabezado del Login con Logo -->
+            <div class="bg-blue-900 p-6">
+                <img src="https://dcdn-us.mitiendanube.com/stores/004/546/736/themes/common/logo-660776128-1736645739-9bb5db1715d3b799cdf782b0f0815d541736645739-480-0.webp" alt="Logo Arelyshop Bolivia" class="mx-auto h-16 w-auto" onerror="this.style.display='none'">
+            </div>
+
+            <!-- Cuerpo del Formulario -->
+            <div class="p-8 space-y-6">
+                <div class="text-center">
+                    <h1 class="text-3xl font-bold text-gray-800">Iniciar Sesión</h1>
+                    <p class="text-gray-500 mt-2">Ingresa tus credenciales para continuar.</p>
+                </div>
+                <form id="login-form" novalidate>
+                    <div class="space-y-5">
+                        <div>
+                            <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
+                            <input type="text" id="username" name="username" required
+                                   class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                                   placeholder="Tu usuario">
+                        </div>
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+                            <input type="password" id="password" name="password" required
+                                   class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                                   placeholder="Tu contraseña">
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <button type="submit" id="login-button"
+                                class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span id="login-button-text">Ingresar</span>
+                            <span id="login-button-spinner" class="hidden">
+                                <svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                </form>
+                <div id="login-message" class="mt-6 text-center text-sm font-medium" aria-live="polite"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor de la Aplicación Principal (Oculto por defecto) -->
+    <div id="app-container" class="flex flex-col min-h-screen bg-gray-100 hidden">
+        <!-- Header -->
+        <header class="bg-blue-900 text-white p-4 shadow-lg flex justify-between items-center sticky top-0 z-20">
+            <img src="https://dcdn-us.mitiendanube.com/stores/004/546/736/themes/common/logo-660776128-1736645739-9bb5db1715d3b799cdf782b0f0815d541736645739-480-0.webp" alt="Logo Arelyshop Bolivia" class="h-12 w-auto" onerror="this.style.display='none'">
+            <div class="flex items-center space-x-4">
+                 <button id="refresh-all-data-button" class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-900 focus:ring-green-500 hidden" aria-label="Refrescar Datos">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 -960 960 960" fill="currentColor">
+                        <path d="M204-318q-22-38-33-78t-11-82q0-134 93-228t227-94h7l-64-64 56-56 160 160-160 160-56-56 64-64h-7q-100 0-170 70.5T240-478q0 26 6 51t18 49l-60 60ZM481-40 321-200l160-160 56 56-64 64h7q100 0 170-70.5T720-482q0-26-6-51t-18-49l60-60q22 38 33 78t11 82q0 134-93 228t-227 94h-7l64 64-56 56Z"/>
+                    </svg>
+                </button>
+                 <button id="admin-panel-button" class="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-full transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-900 focus:ring-yellow-500 hidden" aria-label="Panel de Administrador">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </button>
+                <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-900 focus:ring-red-500" aria-label="Cerrar Sesión">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Barra de Bienvenida y Navegación -->
+        <div id="main-nav-bar" class="bg-white shadow-md sticky top-[80px] z-10">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <p id="welcome-message" class="text-gray-700 text-center sm:text-left py-2"></p>
+                <!-- Pestañas de Navegación -->
+                <div class="border-b border-gray-200">
+                    <nav class="-mb-px flex space-x-4" aria-label="Tabs">
+                        <button id="tab-register-sale" class="tab-button active whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg">
+                            Registrar Venta
+                        </button>
+                        <button id="tab-my-sales" class="tab-button whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg">
+                            Mis Ventas
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido Principal -->
+        <main id="main-content" class="flex-grow container mx-auto px-4 py-8">
+            <!-- Contenedor del Formulario de Ventas (Visible por defecto) -->
+            <div id="sales-container" class="w-full max-w-3xl mx-auto">
+                 <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800">Registrar Nueva Venta</h1>
+                    <p class="text-gray-500 mt-2">Completa los detalles para registrar una nueva venta.</p>
+                </div>
+                <form id="sales-form" novalidate class="bg-white p-8 rounded-xl shadow-lg">
+                    <input type="hidden" id="salesPerson" name="salesPerson">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                        <div class="md:col-span-2">
+                            <label for="saleNumber" class="block text-sm font-medium text-gray-700 mb-1">Nro. de Venta</label>
+                            <input type="text" id="saleNumber" name="saleNumber" readonly class="w-full px-4 py-3 bg-gray-200 border border-gray-300 rounded-lg cursor-not-allowed">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="customerPhone" class="block text-sm font-medium text-gray-700 mb-1">Teléfono del Cliente</label>
+                            <input type="tel" id="customerPhone" name="customerPhone" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ej: 71234567">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="city" class="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
+                            <select id="city" name="city" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Seleccione una...</option>
+                                <option value="Santa Cruz">Santa Cruz</option><option value="Cochabamba">Cochabamba</option><option value="La Paz">La Paz</option><option value="El Alto">El Alto</option><option value="Sucre">Sucre</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="saleDate" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Venta</label>
+                            <input type="date" id="saleDate" name="saleDate" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="productName" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Producto</label>
+                            <input type="text" id="productName" name="productName" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Ej: Cartera de Cuero">
+                        </div>
+                        <div>
+                            <label for="productType" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Producto</label>
+                            <select id="productType" name="productType" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Seleccione uno...</option><option value="Producto Solo">Producto Solo</option><option value="Combo">Combo</option><option value="Tricombo">Tricombo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">Cantidad</label>
+                            <input type="number" id="quantity" name="quantity" required min="1" class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Ej: 1">
+                        </div>
+                        <div>
+                            <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Precio por Unidad (Bs.)</label>
+                            <input type="number" id="amount" name="amount" step="0.01" required min="0" class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Ej: 350.50">
+                        </div>
+                        <div>
+                            <label for="paymentMethod" class="block text-sm font-medium text-gray-700 mb-1">Método de Pago</label>
+                            <select id="paymentMethod" name="paymentMethod" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Seleccione uno...</option><option value="Efectivo">Efectivo</option><option value="Tarjeta de Crédito/Débito">Tarjeta de Crédito/Débito</option><option value="Transferencia Bancaria">Transferencia Bancaria</option><option value="QR">QR</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="saleType" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Venta</label>
+                            <select id="saleType" name="saleType" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Seleccione uno...</option><option value="Minorista">Minorista</option><option value="Mayorista">Mayorista</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="saleModality" class="block text-sm font-medium text-gray-700 mb-1">Modalidad</label>
+                             <select id="saleModality" name="saleModality" required class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Seleccione uno...</option><option value="Tienda Física">Tienda Física</option><option value="Encomienda">Encomienda</option><option value="Delivery">Delivery</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <button type="submit" id="submit-button" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:-translate-y-1 disabled:opacity-50">
+                            <span id="button-text">Registrar Venta</span>
+                            <span id="button-spinner" class="hidden"><svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></span>
+                        </button>
+                    </div>
+                     <div id="message" class="mt-6 text-center text-sm font-medium" aria-live="polite"></div>
+                </form>
+            </div>
+            
+            <!-- Contenedor de "Mis Ventas" (Oculto por defecto) -->
+            <div id="my-sales-container" class="w-full max-w-7xl mx-auto hidden">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800">Reporte de Mis Ventas</h1>
+                    <p class="text-gray-500 mt-2">Aquí puedes ver un resumen y el detalle de tus ventas.</p>
+                    <div class="mt-4">
+                        <button id="refresh-sales-button" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 inline-flex items-center" aria-label="Actualizar Datos">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                            <span>Actualizar Datos</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filtro de Fechas -->
+                <div class="flex flex-wrap items-center justify-center gap-6 mb-8 bg-white p-6 rounded-lg shadow">
+                    <div>
+                        <label for="startDate" class="block text-base font-medium text-gray-700">Fecha de Inicio</label>
+                        <input type="date" id="startDate" name="startDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base p-2">
+                    </div>
+                    <div>
+                        <label for="endDate" class="block text-base font-medium text-gray-700">Fecha de Fin</label>
+                        <input type="date" id="endDate" name="endDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base p-2">
+                    </div>
+                    <div class="self-end">
+                        <button id="filter-button" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2.5 px-5 rounded-lg shadow transition duration-300 ease-in-out">Filtrar</button>
+                        <button id="clear-filter-button" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2.5 px-5 rounded-lg shadow transition duration-300 ease-in-out ml-2">Limpiar</button>
+                    </div>
+                </div>
+
+                <!-- Resumen de Totales -->
+                <div id="sales-summary" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- Total Vendido -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-base font-semibold text-gray-500">Total Vendido</h3>
+                            <div class="bg-blue-100 p-2 rounded-full text-blue-600">
+                               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M444-200h70v-50q50-9 86-39t36-89q0-42-24-77t-96-61q-60-20-83-35t-23-41q0-26 18.5-41t53.5-15q32 0 50 15.5t26 38.5l64-26q-11-35-40.5-61T516-710v-50h-70v50q-50 11-78 44t-28 74q0 47 27.5 76t86.5 50q63 23 87.5 41t24.5 47q0 33-23.5 48.5T486-314q-33 0-58.5-20.5T390-396l-66 26q14 48 43.5 77.5T444-252v52Zm36 120q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+                            </div>
+                        </div>
+                        <p id="total-sold" class="text-3xl font-bold text-gray-800 mb-4">Cargando...</p>
+                        <div class="space-y-2 text-sm border-t pt-4">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Ventas Minorista:</span>
+                                <span id="total-sold-minorista" class="font-medium text-blue-700">Cargando...</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Ventas Mayorista:</span>
+                                <span id="total-sold-mayorista" class="font-medium text-blue-700">Cargando...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comisiones por Porcentaje -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-base font-semibold text-gray-500">Comisión por Venta</h3>
+                            <div class="bg-green-100 p-2 rounded-full text-green-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M560-440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM280-320q-33 0-56.5-23.5T200-400v-320q0-33 23.5-56.5T280-800h560q33 0 56.5 23.5T920-720v320q0 33-23.5 56.5T840-320H280Zm80-80h400q0-33 23.5-56.5T840-480v-160q-33 0-56.5-23.5T760-720H360q0 33-23.5 56.5T280-640v160q33 0 56.5 23.5T360-400Zm440 240H120q-33 0-56.5-23.5T40-240v-440h80v440h680v80ZM280-400v-320 320Z"/></svg>
+                            </div>
+                        </div>
+                        <p id="total-commission" class="text-3xl font-bold text-gray-800 mb-4">Cargando...</p>
+                        <div class="space-y-2 text-sm border-t pt-4">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Minorista (5%):</span>
+                                <span id="commission-minorista" class="font-medium text-green-700">Cargando...</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Mayorista (1%):</span>
+                                <span id="commission-mayorista" class="font-medium text-green-700">Cargando...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comisiones por Producto -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-base font-semibold text-gray-500">Comisión por Producto</h3>
+                            <div class="bg-purple-100 p-2 rounded-full text-purple-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M560-440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM280-320q-33 0-56.5-23.5T200-400v-320q0-33 23.5-56.5T280-800h560q33 0 56.5 23.5T920-720v320q0 33-23.5 56.5T840-320H280Zm80-80h400q0-33 23.5-56.5T840-480v-160q-33 0-56.5-23.5T760-720H360q0 33-23.5 56.5T280-640v160q33 0 56.5 23.5T360-400Zm440 240H120q-33 0-56.5-23.5T40-240v-440h80v440h680v80ZM280-400v-320 320Z"/></svg>
+                            </div>
+                        </div>
+                        <p id="commission-per-product" class="text-3xl font-bold text-gray-800 mb-4">Cargando...</p>
+                        <div class="space-y-2 text-sm border-t pt-4">
+                             <div class="flex justify-between">
+                                <span class="text-gray-600">Productos Solos:</span>
+                                <span id="count-producto-solo" class="font-medium text-purple-700">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Combos:</span>
+                                <span id="count-combo" class="font-medium text-purple-700">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Tricombos:</span>
+                                <span id="count-tricombo" class="font-medium text-purple-700">0</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-2 mt-2">
+                                <span class="font-bold text-gray-700">Total Productos:</span>
+                                <span id="total-products-minorista" class="font-bold text-purple-700">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tabla de Ventas Detalladas -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nro. Venta</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio Unit. (Bs.)</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo Venta</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total (Bs.)</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comisión (Bs.)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sales-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Las filas se insertarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="sales-table-message" class="text-center p-4 text-gray-500 hidden"></div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Contenedor del Panel de Administrador (Oculto por defecto) -->
+        <div id="admin-panel-container" class="w-full max-w-7xl mx-auto px-4 py-8 hidden">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800">Panel de Administrador</h1>
+                <p class="text-gray-500 mt-2">Ver reportes de ventas por asesora.</p>
+                 <button id="back-to-main-view" class="mt-4 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 inline-flex items-center" aria-label="Volver">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    <span>Volver</span>
+                </button>
+            </div>
+
+            <!-- Resumen General -->
+            <div class="mb-10 bg-white p-6 rounded-lg shadow">
+                <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Resumen General de Ventas</h2>
+                <div class="flex flex-wrap items-end justify-center gap-4 mb-6 border-b pb-6">
+                    <div>
+                        <label for="global-startDate" class="block text-sm font-medium text-gray-700">Fecha de Inicio</label>
+                        <input type="date" id="global-startDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm p-2">
+                    </div>
+                    <div>
+                        <label for="global-endDate" class="block text-sm font-medium text-gray-700">Fecha de Fin</label>
+                        <input type="date" id="global-endDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm p-2">
+                    </div>
+                    <div>
+                        <button id="global-filter-button" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-300 ease-in-out">Filtrar Resumen</button>
+                        <button id="global-clear-filter-button" class="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-300 ease-in-out ml-2">Limpiar</button>
+                    </div>
+                </div>
+                <div class="text-center mb-6 bg-blue-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-700">Total Vendido General</h3>
+                    <p id="global-total-sales" class="text-4xl font-bold text-blue-600 mt-2">Cargando...</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Ventas por Asesora -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Total Vendido por Asesora</h3>
+                        <div id="advisor-summary-list" class="space-y-3">
+                            <p class="text-gray-500">Cargando datos...</p>
+                        </div>
+                    </div>
+                    <!-- Ventas por Método de Pago -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Total por Método de Pago</h3>
+                        <div id="payment-method-summary-list" class="space-y-3">
+                             <p class="text-gray-500">Cargando datos...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-8 border-gray-300">
+
+            <!-- Reporte Individual -->
+            <div class="text-center mb-4">
+                 <h2 class="text-2xl font-bold text-gray-800">Reporte Individual por Asesora</h2>
+            </div>
+            <div class="flex flex-wrap items-end justify-center gap-6 mb-8 bg-white p-6 rounded-lg shadow">
+                 <div class="relative">
+                    <label for="admin-user-search" class="block text-base font-medium text-gray-700">Buscar y Seleccionar Asesora</label>
+                    <input type="text" id="admin-user-search" placeholder="Escriba para buscar..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base p-2">
+                    <div id="admin-user-search-results" class="absolute z-10 w-full bg-white border rounded-lg mt-1 shadow-lg hidden"></div>
+                </div>
+                <div>
+                    <label for="admin-startDate" class="block text-base font-medium text-gray-700">Fecha de Inicio</label>
+                    <input type="date" id="admin-startDate" name="startDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base p-2">
+                </div>
+                <div>
+                    <label for="admin-endDate" class="block text-base font-medium text-gray-700">Fecha de Fin</label>
+                    <input type="date" id="admin-endDate" name="endDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base p-2">
+                </div>
+                <div>
+                    <button id="admin-filter-button" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2.5 px-5 rounded-lg shadow transition duration-300 ease-in-out">Filtrar</button>
+                    <button id="admin-clear-filter-button" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2.5 px-5 rounded-lg shadow transition duration-300 ease-in-out ml-2">Limpiar</button>
+                </div>
+            </div>
+            
+             <!-- Contenido del reporte del admin -->
+            <div id="admin-report-content">
+                <!-- Resumen de Totales -->
+                <div id="admin-sales-summary" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- Total Vendido -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-base font-semibold text-gray-500">Total Vendido</h3>
+                            <div class="bg-blue-100 p-2 rounded-full text-blue-600">
+                               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M444-200h70v-50q50-9 86-39t36-89q0-42-24-77t-96-61q-60-20-83-35t-23-41q0-26 18.5-41t53.5-15q32 0 50 15.5t26 38.5l64-26q-11-35-40.5-61T516-710v-50h-70v50q-50 11-78 44t-28 74q0 47 27.5 76t86.5 50q63 23 87.5 41t24.5 47q0 33-23.5 48.5T486-314q-33 0-58.5-20.5T390-396l-66 26q14 48 43.5 77.5T444-252v52Zm36 120q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+                            </div>
+                        </div>
+                        <p id="admin-total-sold" class="text-3xl font-bold text-gray-800 mb-4">Bs. 0.00</p>
+                        <div class="space-y-2 text-sm border-t pt-4">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Ventas Minorista:</span>
+                                <span id="admin-total-sold-minorista" class="font-medium text-blue-700">Bs. 0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Ventas Mayorista:</span>
+                                <span id="admin-total-sold-mayorista" class="font-medium text-blue-700">Bs. 0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comisiones por Porcentaje -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-base font-semibold text-gray-500">Comisión por Venta</h3>
+                            <div class="bg-green-100 p-2 rounded-full text-green-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M560-440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM280-320q-33 0-56.5-23.5T200-400v-320q0-33 23.5-56.5T280-800h560q33 0 56.5 23.5T920-720v320q0 33-23.5 56.5T840-320H280Zm80-80h400q0-33 23.5-56.5T840-480v-160q-33 0-56.5-23.5T760-720H360q0 33-23.5 56.5T280-640v160q33 0 56.5 23.5T360-400Zm440 240H120q-33 0-56.5-23.5T40-240v-440h80v440h680v80ZM280-400v-320 320Z"/></svg>
+                            </div>
+                        </div>
+                        <p id="admin-total-commission" class="text-3xl font-bold text-gray-800 mb-4">Bs. 0.00</p>
+                        <div class="space-y-2 text-sm border-t pt-4">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Minorista (5%):</span>
+                                <span id="admin-commission-minorista" class="font-medium text-green-700">Bs. 0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Mayorista (1%):</span>
+                                <span id="admin-commission-mayorista" class="font-medium text-green-700">Bs. 0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comisiones por Producto -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-base font-semibold text-gray-500">Comisión por Producto</h3>
+                            <div class="bg-purple-100 p-2 rounded-full text-purple-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M560-440q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM280-320q-33 0-56.5-23.5T200-400v-320q0-33 23.5-56.5T280-800h560q33 0 56.5 23.5T920-720v320q0 33-23.5 56.5T840-320H280Zm80-80h400q0-33 23.5-56.5T840-480v-160q-33 0-56.5-23.5T760-720H360q0 33-23.5 56.5T280-640v160q33 0 56.5 23.5T360-400Zm440 240H120q-33 0-56.5-23.5T40-240v-440h80v440h680v80ZM280-400v-320 320Z"/></svg>
+                            </div>
+                        </div>
+                        <p id="admin-commission-per-product" class="text-3xl font-bold text-gray-800 mb-4">Bs. 0.00</p>
+                        <div class="space-y-2 text-sm border-t pt-4">
+                             <div class="flex justify-between">
+                                <span class="text-gray-600">Productos Solos:</span>
+                                <span id="admin-count-producto-solo" class="font-medium text-purple-700">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Combos:</span>
+                                <span id="admin-count-combo" class="font-medium text-purple-700">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Tricombos:</span>
+                                <span id="admin-count-tricombo" class="font-medium text-purple-700">0</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-2 mt-2">
+                                <span class="font-bold text-gray-700">Total Productos:</span>
+                                <span id="admin-total-products-minorista" class="font-bold text-purple-700">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tabla de Ventas Detalladas -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nro. Venta</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio Unit. (Bs.)</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo Venta</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total (Bs.)</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comisión (Bs.)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-sales-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Las filas se insertarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="admin-sales-table-message" class="text-center p-4 text-gray-500">Seleccione una asesora para ver sus ventas.</div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white text-center p-4 mt-auto">
+            <p>&copy; <span id="footer-year"></span> Arelyshop Bolivia. Todos los derechos reservados.</p>
+        </footer>
+    </div>
+    
+    <!-- Modal para Detalles de Venta -->
+    <div id="sale-details-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-2xl font-bold text-gray-900">Detalles de la Venta</h3>
+                <button id="close-modal-btn" class="text-gray-400 hover:text-gray-600">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="modal-content-body" class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <!-- Los detalles de la venta se insertarán aquí dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- URLs ---
+        const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQbzWpIQ5AcI4sLGUIxGQoSyjfJIjKfwvgn9vSfbr_c7SYeYur2iC7CGNJ-oRkVDogL6dU6hyJsue12/pub?output=csv";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMR_1BA5C2UQBjKGkJ_4b6Kq9YsDzG3De6AnOE117kumpHvo7ubY6FBCXW4CeZ9YJg/exec";
+        const SALES_DATA_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2-YJeYaL22__yyqtKeLdYdYmh-2dkt2pkmJAjq9MzHDs_mh8SKWh0TQE-UOG1RXpXslSubejROelC/pub?output=csv';
+
+        // --- Variables Globales ---
+        let users = [];
+        let loggedInUser = null;
+        let currentUserSaleCount = 1;
+        let allSalesData = []; // Almacenará todas las filas de la hoja de cálculo
+        let adminSelectedUser = null;
+        
+        // --- Funciones de Utilidad ---
+        
+        function updateSaleNumberDisplay() {
+            if (!loggedInUser) return;
+            document.getElementById('saleNumber').value = currentUserSaleCount;
+        }
+
+        async function fetchNextSaleNumber(user) {
+            document.getElementById('saleNumber').value = "Cargando...";
+            try {
+                const response = await fetch(`${SALES_DATA_URL}&t=${new Date().getTime()}`);
+                if (!response.ok) throw new Error('No se pudo cargar los datos de ventas.');
+                
+                const csvText = await response.text();
+                const lines = csvText.trim().split('\n');
+                
+                if (lines.length < 2) {
+                    currentUserSaleCount = 1;
+                    updateSaleNumberDisplay();
+                    return;
+                }
+
+                const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+                const saleNumberIndex = headers.indexOf('Nro. Venta');
+                const userIndex = headers.indexOf('Asesora');
+
+                if (saleNumberIndex === -1 || userIndex === -1) {
+                    showSalesMessage('Error de configuración en hoja de ventas. Se usará 1.', 'error');
+                    currentUserSaleCount = 1;
+                    updateSaleNumberDisplay();
+                    return;
+                }
+
+                let maxSaleNumber = 0;
+                for (let i = 1; i < lines.length; i++) {
+                    const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+                    const rowUser = values[userIndex] ? values[userIndex].trim() : '';
+                    const saleNumber = parseInt(values[saleNumberIndex], 10);
+
+                    if (rowUser === user && !isNaN(saleNumber) && saleNumber > maxSaleNumber) {
+                        maxSaleNumber = saleNumber;
+                    }
+                }
+                currentUserSaleCount = maxSaleNumber + 1;
+            } catch (error) {
+                showSalesMessage('No se pudo obtener el Nro. de Venta. Se usará 1 por defecto.', 'error');
+                currentUserSaleCount = 1;
+            } finally {
+                updateSaleNumberDisplay();
+            }
+        }
+
+        // --- Funciones de Login y Logout ---
+        
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const userList = [];
+            lines.slice(1).forEach(line => {
+                const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+                if (values.length >= 3) {
+                    userList.push({
+                        user: values[0].trim(),
+                        password: values[1].trim(),
+                        fullName: values[2].trim().replace(/"/g, '')
+                    });
+                }
+            });
+            return userList;
+        }
+
+        async function fetchUsers() {
+            try {
+                const response = await fetch(`${GOOGLE_SHEET_URL}&t=${new Date().getTime()}`);
+                if (!response.ok) throw new Error('No se pudo cargar la lista de usuarios.');
+                const csvText = await response.text();
+                users = parseCSV(csvText);
+            } catch (error) {
+                showLoginMessage("Error crítico: No se pudo conectar con la base de datos de usuarios.", 'error');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const foundUser = users.find(u => u.user === username && u.password === password);
+
+            if (foundUser) {
+                loggedInUser = foundUser;
+                showLoginMessage('¡Inicio de sesión exitoso!', 'success');
+                setTimeout(async () => {
+                    document.getElementById('login-wrapper').classList.add('hidden');
+                    document.getElementById('app-container').classList.remove('hidden');
+                    updateHeader();
+                    await fetchNextSaleNumber(loggedInUser.user);
+                    
+                    document.getElementById('refresh-all-data-button').classList.remove('hidden');
+                    if(loggedInUser.user === 'admin') {
+                        document.getElementById('admin-panel-button').classList.remove('hidden');
+                    } else {
+                         document.getElementById('admin-panel-button').classList.add('hidden');
+                    }
+
+                    // Por defecto, mostrar la pestaña de registrar venta
+                    switchTab('register');
+                }, 1000);
+            } else {
+                showLoginMessage('Usuario o contraseña incorrectos.', 'error');
+            }
+        }
+        
+        function handleLogout() {
+            loggedInUser = null;
+            document.getElementById('app-container').classList.add('hidden');
+            document.getElementById('login-wrapper').classList.remove('hidden');
+            document.getElementById('login-form').reset();
+            showLoginMessage('', 'success');
+            document.getElementById('admin-panel-button').classList.add('hidden');
+            document.getElementById('refresh-all-data-button').classList.add('hidden');
+            showMainContent();
+        }
+
+        function updateHeader() {
+            if (!loggedInUser) return;
+            document.getElementById('welcome-message').innerHTML = `¡Bienvenid@, <span class="font-bold text-blue-800">${loggedInUser.fullName}</span>!`;
+        }
+
+        function showLoginMessage(msg, type) {
+            const loginMessage = document.getElementById('login-message');
+            loginMessage.textContent = msg;
+            loginMessage.className = 'mt-6 text-center text-sm font-medium';
+            loginMessage.classList.add(type === 'success' ? 'text-green-600' : 'text-red-600');
+        }
+
+        // --- Funciones del Formulario de Ventas ---
+
+        function handleSaleSubmit(e) {
+            e.preventDefault();
+            const salesForm = document.getElementById('sales-form');
+            if (!salesForm.checkValidity()) {
+                showSalesMessage('Por favor, completa todos los campos requeridos.', 'error');
+                return;
+            }
+
+            setLoading(true, 'sales');
+            showSalesMessage('', 'success');
+
+            document.getElementById('saleNumber').value = currentUserSaleCount;
+            document.getElementById('salesPerson').value = loggedInUser.user;
+
+            const formData = new FormData(salesForm);
+            const saleData = Object.fromEntries(formData.entries());
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                redirect: 'follow',
+                body: JSON.stringify(saleData),
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            })
+            .then(response => response.ok ? response.json() : Promise.reject('Respuesta de red no fue exitosa.'))
+            .then(data => {
+                if (data.status === 'success') {
+                    showSalesMessage('¡Venta registrada con éxito!', 'success');
+                    currentUserSaleCount++;
+                    salesForm.reset();
+                    document.getElementById('saleDate').valueAsDate = new Date();
+                    updateSaleNumberDisplay(); 
+                } else {
+                    throw new Error(data.message || 'El script devolvió un error.');
+                }
+            })
+            .catch(error => {
+                const userFriendlyMessage = error instanceof TypeError ? "Error de red. Verifica tu conexión." : "Error al registrar la venta.";
+                showSalesMessage(userFriendlyMessage, 'error');
+            })
+            .finally(() => setLoading(false, 'sales'));
+        }
+
+        function showSalesMessage(msg, type) {
+            const salesMessage = document.getElementById('message');
+            salesMessage.textContent = msg;
+            salesMessage.className = 'mt-6 text-center text-sm font-medium';
+            salesMessage.classList.add(type === 'success' ? 'text-green-600' : 'text-red-600');
+        }
+        
+        // --- VISTAS Y NAVEGACIÓN ---
+        function showAdminPanel() {
+            document.getElementById('main-content').classList.add('hidden');
+            document.getElementById('main-nav-bar').classList.add('hidden');
+            document.getElementById('admin-panel-container').classList.remove('hidden');
+            
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+
+            document.getElementById('global-startDate').value = formatDateForInput(firstDay);
+            document.getElementById('global-endDate').value = formatDateForInput(lastDay);
+
+            calculateAndDisplayGlobalSummary();
+        }
+
+        function showMainContent() {
+            document.getElementById('main-content').classList.remove('hidden');
+            document.getElementById('main-nav-bar').classList.remove('hidden');
+            document.getElementById('admin-panel-container').classList.add('hidden');
+        }
+        
+        function switchTab(tabName) {
+            const tabRegisterSale = document.getElementById('tab-register-sale');
+            const tabMySales = document.getElementById('tab-my-sales');
+            const salesContainer = document.getElementById('sales-container');
+            const mySalesContainer = document.getElementById('my-sales-container');
+
+            if (tabName === 'register') {
+                tabRegisterSale.classList.add('active');
+                tabMySales.classList.remove('active');
+                salesContainer.classList.remove('hidden');
+                mySalesContainer.classList.add('hidden');
+            } else if (tabName === 'my-sales') {
+                tabMySales.classList.add('active');
+                tabRegisterSale.classList.remove('active');
+                mySalesContainer.classList.remove('hidden');
+                salesContainer.classList.add('hidden');
+                
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = today.getMonth();
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+
+                document.getElementById('startDate').value = formatDateForInput(firstDay);
+                document.getElementById('endDate').value = formatDateForInput(lastDay);
+
+                displayMySales();
+            }
+        }
+        
+        // --- FUNCIONES DE REPORTE ---
+
+        async function displayMySales() {
+            if (!loggedInUser) return;
+            await displayReport(loggedInUser.user, 'user');
+        }
+        
+        async function displayAdminReport() {
+            const userToReport = adminSelectedUser;
+            if (!userToReport) {
+                 const tableMessage = document.getElementById('admin-sales-table-message');
+                 tableMessage.textContent = 'Por favor, busque y seleccione una asesora para ver el reporte.';
+                 tableMessage.classList.remove('hidden');
+                 document.getElementById('admin-sales-table-body').innerHTML = '';
+                 resetSummary('admin');
+                 return;
+            }
+            await displayReport(userToReport, 'admin');
+        }
+
+        async function displayReport(userToReport, reportType) {
+            const isUserReport = reportType === 'user';
+            const summaryPrefix = isUserReport ? '' : 'admin-';
+            const tableBodyId = isUserReport ? 'sales-table-body' : 'admin-sales-table-body';
+            const tableMessageId = isUserReport ? 'sales-table-message' : 'admin-sales-table-message';
+            const startDateId = isUserReport ? 'startDate' : 'admin-startDate';
+            const endDateId = isUserReport ? 'endDate' : 'admin-endDate';
+
+            // Mostrar estado de carga
+            resetSummary(reportType, true);
+            document.getElementById(tableBodyId).innerHTML = `<tr><td colspan="9" class="text-center p-4">Cargando datos...</td></tr>`;
+            document.getElementById(tableMessageId).classList.add('hidden');
+
+            try {
+                if(allSalesData.length === 0) {
+                    await fetchAllSalesData();
+                }
+
+                const startDateValue = document.getElementById(startDateId).value;
+                const endDateValue = document.getElementById(endDateId).value;
+                const startDate = startDateValue ? new Date(startDateValue + 'T00:00:00') : null;
+                const endDate = endDateValue ? new Date(endDateValue + 'T23:59:59') : null;
+
+                let totalSold = 0, totalSoldMinorista = 0, totalSoldMayorista = 0;
+                let totalCommission = 0, totalCommissionMinorista = 0, totalCommissionMayorista = 0;
+                let totalProductsMinorista = 0, countProductoSolo = 0, countCombo = 0, countTricombo = 0;
+                let salesHtml = '';
+                let hasSalesInFilter = false;
+
+                allSalesData.forEach((sale, index) => {
+                    const saleUser = sale['Asesora'] ? sale['Asesora'].trim() : '';
+                    if (saleUser === userToReport) {
+                        const saleDateString = sale['Fecha Venta'];
+                        if (!saleDateString) return;
+                        const saleDate = new Date(saleDateString);
+                        if (isNaN(saleDate.getTime())) return;
+
+                        if ((startDate && saleDate < startDate) || (endDate && saleDate > endDate)) return;
+                        
+                        hasSalesInFilter = true;
+                        
+                        const saleType = sale['Tipo de Venta'] ? sale['Tipo de Venta'].trim() : '';
+                        const productType = sale['Tipo Producto'] ? sale['Tipo Producto'].trim() : '';
+                        const totalPaid = parseFloat(sale['Total Pagado']) || 0;
+                        
+                        let commission = 0;
+                        let commissionPercentage = 0;
+
+                        if (saleType === 'Minorista') {
+                            totalSoldMinorista += totalPaid;
+                            commission = totalPaid * 0.05;
+                            totalCommissionMinorista += commission;
+                            commissionPercentage = 5;
+                            if (productType === 'Producto Solo') { totalProductsMinorista += 1; countProductoSolo++; }
+                            else if (productType === 'Combo') { totalProductsMinorista += 2; countCombo++; }
+                            else if (productType === 'Tricombo') { totalProductsMinorista += 3; countTricombo++; }
+                        } else if (saleType === 'Mayorista') {
+                            totalSoldMayorista += totalPaid;
+                            commission = totalPaid * 0.01;
+                            totalCommissionMayorista += commission;
+                            commissionPercentage = 1;
+                        }
+
+                        totalSold += totalPaid;
+                        totalCommission += commission;
+                        
+                        salesHtml += `
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="view-details-btn bg-indigo-600 text-white px-3 py-1 rounded-md hover:bg-indigo-700 text-xs" data-sale-index="${index}">Ver</button>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${sale['Nro. Venta'] || 'N/A'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${sale['Fecha Venta'] || 'N/A'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${sale['Producto'] || 'N/A'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${sale['Cantidad'] || 'N/A'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${(parseFloat(sale['Monto']) || 0).toFixed(2)}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${saleType}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${totalPaid.toFixed(2)}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">
+                                    ${commission.toFixed(2)} ${commissionPercentage > 0 ? `(${commissionPercentage}%)` : ''}
+                                </td>
+                            </tr>
+                        `;
+                    }
+                });
+                
+                const commissionPerProduct = totalProductsMinorista * 0.5;
+
+                document.getElementById(`${summaryPrefix}total-sold`).textContent = `Bs. ${totalSold.toFixed(2)}`;
+                document.getElementById(`${summaryPrefix}total-sold-minorista`).textContent = `Bs. ${totalSoldMinorista.toFixed(2)}`;
+                document.getElementById(`${summaryPrefix}total-sold-mayorista`).textContent = `Bs. ${totalSoldMayorista.toFixed(2)}`;
+                document.getElementById(`${summaryPrefix}total-commission`).textContent = `Bs. ${totalCommission.toFixed(2)}`;
+                document.getElementById(`${summaryPrefix}commission-minorista`).textContent = `Bs. ${totalCommissionMinorista.toFixed(2)}`;
+                document.getElementById(`${summaryPrefix}commission-mayorista`).textContent = `Bs. ${totalCommissionMayorista.toFixed(2)}`;
+                document.getElementById(`${summaryPrefix}commission-per-product`).textContent = `Bs. ${commissionPerProduct.toFixed(2)}`;
+                document.getElementById(`${summaryPrefix}count-producto-solo`).textContent = countProductoSolo;
+                document.getElementById(`${summaryPrefix}count-combo`).textContent = countCombo;
+                document.getElementById(`${summaryPrefix}count-tricombo`).textContent = countTricombo;
+                document.getElementById(`${summaryPrefix}total-products-minorista`).textContent = totalProductsMinorista;
+                
+                const salesTableBody = document.getElementById(tableBodyId);
+                if (!hasSalesInFilter) {
+                    salesTableBody.innerHTML = `<tr><td colspan="9" class="text-center p-4">No se encontraron ventas para los filtros seleccionados.</td></tr>`;
+                } else {
+                    salesTableBody.innerHTML = salesHtml;
+                }
+                document.getElementById(tableMessageId).classList.add('hidden');
+
+            } catch (error) {
+                console.error(`Error in displayReport for ${reportType}:`, error);
+                resetSummary(reportType);
+                document.getElementById(tableBodyId).innerHTML = '';
+                const tableMessage = document.getElementById(tableMessageId);
+                tableMessage.textContent = error.message;
+                tableMessage.classList.remove('hidden');
+            }
+        }
+        
+        function resetSummary(reportType, isLoading = false) {
+            const prefix = reportType === 'user' ? '' : 'admin-';
+            const loadingText = isLoading ? 'Cargando...' : 'Bs. 0.00';
+            const loadingCount = isLoading ? '...' : '0';
+
+            document.getElementById(`${prefix}total-sold`).textContent = loadingText;
+            document.getElementById(`${prefix}total-sold-minorista`).textContent = loadingText;
+            document.getElementById(`${prefix}total-sold-mayorista`).textContent = loadingText;
+            document.getElementById(`${prefix}total-commission`).textContent = loadingText;
+            document.getElementById(`${prefix}commission-minorista`).textContent = loadingText;
+            document.getElementById(`${prefix}commission-mayorista`).textContent = loadingText;
+            document.getElementById(`${prefix}commission-per-product`).textContent = loadingText;
+            document.getElementById(`${prefix}count-producto-solo`).textContent = loadingCount;
+            document.getElementById(`${prefix}count-combo`).textContent = loadingCount;
+            document.getElementById(`${prefix}count-tricombo`).textContent = loadingCount;
+            document.getElementById(`${prefix}total-products-minorista`).textContent = loadingCount;
+        }
+
+        async function fetchAllSalesData() {
+             const response = await fetch(`${SALES_DATA_URL}&t=${new Date().getTime()}`);
+            if (!response.ok) throw new Error('No se pudo cargar el reporte de ventas.');
+            const csvText = await response.text();
+            const lines = csvText.trim().split('\n');
+            if (lines.length < 2) {
+                allSalesData = [];
+                throw new Error('No hay ventas registradas todavía.');
+            }
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            allSalesData = lines.slice(1).map(line => {
+                const row = {};
+                const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+                headers.forEach((header, i) => { row[header] = values[i]; });
+                return row;
+            });
+        }
+
+        async function calculateAndDisplayGlobalSummary() {
+            const advisorListDiv = document.getElementById('advisor-summary-list');
+            const paymentListDiv = document.getElementById('payment-method-summary-list');
+            const globalTotalP = document.getElementById('global-total-sales');
+            
+            advisorListDiv.innerHTML = '<p class="text-gray-500">Cargando datos...</p>';
+            paymentListDiv.innerHTML = '<p class="text-gray-500">Cargando datos...</p>';
+            globalTotalP.textContent = 'Cargando...';
+
+            try {
+                if (allSalesData.length === 0) {
+                   await fetchAllSalesData();
+                }
+                
+                const startDateValue = document.getElementById('global-startDate').value;
+                const endDateValue = document.getElementById('global-endDate').value;
+                const startDate = startDateValue ? new Date(startDateValue + 'T00:00:00') : null;
+                const endDate = endDateValue ? new Date(endDateValue + 'T23:59:59') : null;
+
+                let globalTotal = 0;
+                const salesByAdvisor = {};
+                const paymentMethodsToTrack = ['Efectivo', 'QR', 'Transferencia Bancaria'];
+                const salesByPaymentMethod = { 'Efectivo': 0, 'QR': 0, 'Transferencia Bancaria': 0 };
+                
+                allSalesData.forEach(sale => {
+                    const saleDateString = sale['Fecha Venta'];
+                    if (!saleDateString) return;
+                    const saleDate = new Date(saleDateString);
+                    if (isNaN(saleDate.getTime())) return;
+
+                    if ((startDate && saleDate < startDate) || (endDate && saleDate > endDate)) {
+                        return;
+                    }
+
+                    const totalPaid = parseFloat(sale['Total Pagado']) || 0;
+                    globalTotal += totalPaid;
+
+                    const advisorUser = sale['Asesora'] ? sale['Asesora'].trim() : 'Desconocido';
+                    if (advisorUser !== 'admin') {
+                         if (!salesByAdvisor[advisorUser]) {
+                            salesByAdvisor[advisorUser] = 0;
+                        }
+                        salesByAdvisor[advisorUser] += totalPaid;
+                    }
+                   
+                    const method = sale['Método de Pago'] ? sale['Método de Pago'].trim() : 'Otro';
+                    if (paymentMethodsToTrack.includes(method)) {
+                        salesByPaymentMethod[method] += totalPaid;
+                    }
+                });
+
+                globalTotalP.textContent = `Bs. ${globalTotal.toFixed(2)}`;
+
+                const advisorSalesArray = Object.keys(salesByAdvisor).map(user => {
+                    const advisorInfo = users.find(u => u.user === user);
+                    return {
+                        fullName: advisorInfo ? advisorInfo.fullName : user,
+                        total: salesByAdvisor[user]
+                    };
+                }).sort((a, b) => b.total - a.total);
+
+                advisorListDiv.innerHTML = '';
+                if (advisorSalesArray.length > 0) {
+                    const top5 = advisorSalesArray.slice(0, 5);
+                    const rest = advisorSalesArray.slice(5);
+
+                    top5.forEach(advisor => {
+                        const advisorDiv = document.createElement('div');
+                        advisorDiv.className = 'flex justify-between items-center text-sm';
+                        advisorDiv.innerHTML = `
+                            <span class="text-gray-600">${advisor.fullName}</span>
+                            <span class="font-semibold text-blue-600">Bs. ${advisor.total.toFixed(2)}</span>
+                        `;
+                        advisorListDiv.appendChild(advisorDiv);
+                    });
+
+                    if (rest.length > 0) {
+                        const restContainer = document.createElement('div');
+                        restContainer.id = 'rest-of-advisors';
+                        restContainer.className = 'hidden space-y-3 mt-3';
+                        rest.forEach(advisor => {
+                            const advisorDiv = document.createElement('div');
+                            advisorDiv.className = 'flex justify-between items-center text-sm';
+                            advisorDiv.innerHTML = `
+                                <span class="text-gray-600">${advisor.fullName}</span>
+                                <span class="font-semibold text-blue-600">Bs. ${advisor.total.toFixed(2)}</span>
+                            `;
+                            restContainer.appendChild(advisorDiv);
+                        });
+                        advisorListDiv.appendChild(restContainer);
+
+                        const toggleButton = document.createElement('button');
+                        toggleButton.className = 'text-sm text-indigo-600 hover:text-indigo-800 mt-3 font-medium';
+                        toggleButton.textContent = 'Ver más';
+                        toggleButton.onclick = () => {
+                            const isHidden = restContainer.classList.toggle('hidden');
+                            toggleButton.textContent = isHidden ? 'Ver más' : 'Ver menos';
+                        };
+                        advisorListDiv.appendChild(toggleButton);
+                    }
+                } else {
+                    advisorListDiv.innerHTML = '<p class="text-gray-500">No hay ventas para mostrar.</p>';
+                }
+
+                paymentListDiv.innerHTML = '';
+                for (const method in salesByPaymentMethod) {
+                    const paymentDiv = document.createElement('div');
+                    paymentDiv.className = 'flex justify-between items-center text-sm';
+                    paymentDiv.innerHTML = `
+                        <span class="text-gray-600">${method}</span>
+                        <span class="font-semibold text-green-600">Bs. ${salesByPaymentMethod[method].toFixed(2)}</span>
+                    `;
+                    paymentListDiv.appendChild(paymentDiv);
+                }
+
+            } catch (error) {
+                console.error("Error calculating global summary:", error);
+                globalTotalP.textContent = 'Error';
+                advisorListDiv.innerHTML = `<p class="text-red-500">${error.message}</p>`;
+                paymentListDiv.innerHTML = `<p class="text-red-500">Error al cargar datos.</p>`;
+            }
+        }
+        
+        function showSaleDetails(saleIndex) {
+            const saleData = allSalesData[saleIndex];
+            if (!saleData) return;
+
+            const modalBody = document.getElementById('modal-content-body');
+            const headers = [
+                'Nro. Venta', 'Teléfono Cliente', 'Ciudad', 'Timestamp', 'Fecha Venta', 'Asesora', 
+                'Tipo Producto', 'Cantidad', 'Producto', 'Método de Pago', 'Monto', 
+                'Tipo de Venta', 'Modalidad', 'Total Pagado'
+            ];
+
+            let detailsHtml = '';
+            headers.forEach(header => {
+                detailsHtml += `
+                    <div class="p-2 bg-gray-50 rounded-lg">
+                        <p class="font-semibold text-gray-600">${header}:</p>
+                        <p class="text-gray-800">${saleData[header] || 'N/A'}</p>
+                    </div>
+                `;
+            });
+
+            modalBody.innerHTML = detailsHtml;
+            document.getElementById('sale-details-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('sale-details-modal').classList.add('hidden');
+        }
+
+
+        function setLoading(isLoading, formType) {
+            const button = formType === 'login' ? document.getElementById('login-button') : document.getElementById('submit-button');
+            const text = formType === 'login' ? document.getElementById('login-button-text') : document.getElementById('button-text');
+            const spinner = formType === 'login' ? document.getElementById('login-button-spinner') : document.getElementById('button-spinner');
+
+            button.disabled = isLoading;
+            if (isLoading) {
+                text.classList.add('hidden');
+                spinner.classList.remove('hidden');
+            } else {
+                text.classList.remove('hidden');
+                spinner.classList.add('hidden');
+            }
+        }
+
+        function formatDateForInput(date) {
+            const d = new Date(date);
+            let month = '' + (d.getMonth() + 1);
+            let day = '' + d.getDate();
+            const year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+        
+        async function refreshAllData() {
+            const refreshButton = document.getElementById('refresh-all-data-button');
+            refreshButton.disabled = true;
+            refreshButton.classList.add('opacity-50', 'cursor-not-allowed', 'animate-spin');
+
+            try {
+                allSalesData = [];
+                users = [];
+
+                await fetchUsers();
+                await fetchAllSalesData();
+
+                const adminPanelVisible = !document.getElementById('admin-panel-container').classList.contains('hidden');
+                const mySalesTabActive = document.getElementById('tab-my-sales').classList.contains('active');
+
+                if (adminPanelVisible) {
+                    await calculateAndDisplayGlobalSummary();
+                    if (adminSelectedUser) {
+                        await displayAdminReport();
+                    }
+                } else if (mySalesTabActive) {
+                    await displayMySales();
+                }
+
+                await fetchNextSaleNumber(loggedInUser.user);
+
+            } catch (error) {
+                console.error("Error refreshing all data:", error);
+                alert("Hubo un error al refrescar los datos. Por favor, intente de nuevo.");
+            } finally {
+                refreshButton.disabled = false;
+                refreshButton.classList.remove('opacity-50', 'cursor-not-allowed', 'animate-spin');
+            }
+        }
+
+
+        // --- Inicialización ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Elementos del DOM ---
+            const loginForm = document.getElementById('login-form');
+            const logoutButton = document.getElementById('logout-button');
+            const salesForm = document.getElementById('sales-form');
+            const refreshAllDataButton = document.getElementById('refresh-all-data-button');
+            
+            const tabRegisterSale = document.getElementById('tab-register-sale');
+            const tabMySales = document.getElementById('tab-my-sales');
+            const refreshSalesButton = document.getElementById('refresh-sales-button');
+            const filterButton = document.getElementById('filter-button');
+            const clearFilterButton = document.getElementById('clear-filter-button');
+            
+            const adminPanelButton = document.getElementById('admin-panel-button');
+            const backToMainViewButton = document.getElementById('back-to-main-view');
+            const adminUserSearch = document.getElementById('admin-user-search');
+            const adminUserSearchResults = document.getElementById('admin-user-search-results');
+            const adminFilterButton = document.getElementById('admin-filter-button');
+            const adminClearFilterButton = document.getElementById('admin-clear-filter-button');
+            const globalFilterButton = document.getElementById('global-filter-button');
+            const globalClearFilterButton = document.getElementById('global-clear-filter-button');
+            
+            const salesTableBody = document.getElementById('sales-table-body');
+            const adminSalesTableBody = document.getElementById('admin-sales-table-body');
+            const modal = document.getElementById('sale-details-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+
+            // --- Event Listeners ---
+            loginForm.addEventListener('submit', handleLogin);
+            logoutButton.addEventListener('click', handleLogout);
+            salesForm.addEventListener('submit', handleSaleSubmit);
+            refreshAllDataButton.addEventListener('click', refreshAllData);
+            
+            tabRegisterSale.addEventListener('click', () => switchTab('register'));
+            tabMySales.addEventListener('click', () => switchTab('my-sales'));
+            refreshSalesButton.addEventListener('click', () => { allSalesData = []; displayMySales(); });
+            filterButton.addEventListener('click', displayMySales);
+            clearFilterButton.addEventListener('click', () => {
+                document.getElementById('startDate').value = '';
+                document.getElementById('endDate').value = '';
+                displayMySales();
+            });
+
+            // Admin Panel Listeners
+            adminPanelButton.addEventListener('click', showAdminPanel);
+            backToMainViewButton.addEventListener('click', showMainContent);
+            globalFilterButton.addEventListener('click', calculateAndDisplayGlobalSummary);
+            globalClearFilterButton.addEventListener('click', () => {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = today.getMonth();
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+
+                document.getElementById('global-startDate').value = formatDateForInput(firstDay);
+                document.getElementById('global-endDate').value = formatDateForInput(lastDay);
+                calculateAndDisplayGlobalSummary();
+            });
+            
+            adminUserSearch.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                adminUserSearchResults.innerHTML = '';
+                adminSelectedUser = null;
+
+                if (searchTerm.length < 1) {
+                    adminUserSearchResults.classList.add('hidden');
+                    return;
+                }
+
+                const filteredUsers = users.filter(user => 
+                    user.user !== 'admin' &&
+                    (user.fullName.toLowerCase().includes(searchTerm) ||
+                     user.user.toLowerCase().includes(searchTerm))
+                );
+
+                if (filteredUsers.length > 0) {
+                    filteredUsers.forEach(user => {
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'p-2 hover:bg-gray-100 cursor-pointer';
+                        resultItem.textContent = `${user.fullName} (${user.user})`;
+                        resultItem.dataset.userId = user.user;
+                        resultItem.dataset.userName = user.fullName;
+                        adminUserSearchResults.appendChild(resultItem);
+                    });
+                    adminUserSearchResults.classList.remove('hidden');
+                } else {
+                    adminUserSearchResults.classList.add('hidden');
+                }
+            });
+            
+            adminUserSearchResults.addEventListener('click', (e) => {
+                if (e.target && e.target.dataset.userId) {
+                    adminSelectedUser = e.target.dataset.userId;
+                    adminUserSearch.value = e.target.dataset.userName;
+                    adminUserSearchResults.classList.add('hidden');
+                }
+            });
+
+            adminFilterButton.addEventListener('click', displayAdminReport);
+            
+            adminClearFilterButton.addEventListener('click', () => {
+                document.getElementById('admin-startDate').value = '';
+                document.getElementById('admin-endDate').value = '';
+                document.getElementById('admin-user-search').value = '';
+                adminSelectedUser = null;
+                adminUserSearchResults.innerHTML = '';
+                adminUserSearchResults.classList.add('hidden');
+                resetSummary('admin');
+                document.getElementById('admin-sales-table-body').innerHTML = '';
+                const tableMessage = document.getElementById('admin-sales-table-message');
+                tableMessage.textContent = 'Seleccione una asesora para ver sus ventas.';
+                tableMessage.classList.remove('hidden');
+            });
+            
+            // Modal Listeners
+            const viewDetailsHandler = (e) => {
+                if (e.target && e.target.classList.contains('view-details-btn')) {
+                    const saleIndex = e.target.dataset.saleIndex;
+                    showSaleDetails(saleIndex);
+                }
+            };
+            salesTableBody.addEventListener('click', viewDetailsHandler);
+            adminSalesTableBody.addEventListener('click', viewDetailsHandler);
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target.id === 'sale-details-modal') closeModal();
+            });
+
+            // --- Inicialización de la App ---
+            fetchUsers();
+            document.getElementById('footer-year').textContent = new Date().getFullYear();
+            document.getElementById('saleDate').valueAsDate = new Date();
+        });
+    </script>
+</body>
+</html>
